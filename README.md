@@ -1,172 +1,114 @@
 # Virtual Software Engineering Lab
 
-A comprehensive virtual laboratory for learning software engineering concepts through interactive exercises and simulations.
+This project is a comprehensive virtual laboratory that leverages Docker to containerize multiple microservices for learning software engineering concepts through interactive exercises and simulations.
 
 ## Overview
 
-This project provides hands-on experience with:
+The lab provides hands-on experience with the following microservices:
 
-- Project Management tools and methodologies
-- Collaboration tools and workflows
-- Agile development practices
-- Testing frameworks and methodologies
+- **Agile Methodology Services:** Scrum Board, Kanban Board, User Stories, Sprint Planning, Burndown Chart (Ports: 8011–8015)
+- **Collaboration Tools:** Git Flow Simulation, PR & Merge Practice, Chat Simulation, Markdown Editor, File Sharing (Ports: 8006–8010)
+- **Testing Frameworks:** Unit Testing, Integration Testing, TDD Simulation, Test Automation, CI/CD Pipeline (Ports: 8016–8020)
+- **Project Management:** SDLC Visualization, Work Breakdown Structure, Gantt Chart Creation, Resource Allocation, Risk Management (Ports: 8001–8005)
+- **Main Dashboard:** Aggregates data from all microservices (Port: 8000)
+- **Backend Services:** Progress Tracker, User Session Service, Dashboard API (Ports: 9000, 9001, 9100)
 
-## Installation
-
-1. Create and activate virtual environment:
-
-```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-```
-
-2. Install dependencies:
-
-```powershell
-pip install -r requirements.txt
-```
+Each microservice has its own Dockerfile and README with detailed API endpoints and instructions.
 
 ## Project Structure
 
 ```
 CC_VLab/
-├── main_dashboard/        # Main application interface
-├── project_management/    # PM exercises
-│   ├── sdlc/
-│   ├── wbs/
-│   ├── gantt/
-│   ├── resource_allocation/
-│   └── risk_management/
-├── collaboration_tools/   # Collaboration exercises
-│   ├── git_flow/
-│   ├── pr_merge/
-│   ├── chat_sim/
-│   ├── markdown_doc/
-│   └── file_sharing/
-├── agile_methodology/    # Agile practice exercises
-│   ├── scrum_board/
-│   ├── kanban/
-│   ├── user_stories/
-│   ├── sprint_planning/
-│   └── burndown_chart/
-├── testing_frameworks/   # Testing exercises
-│   ├── unit_test/
-│   ├── integration_test/
-│   ├── tdd_sim/
-│   ├── test_automation/
-│   └── ci_cd/
-└── backend_services/    # Core services
-    ├── progress_tracker.py
-    └── user_session.py
+├── agile_methodology/     // Agile microservices (with Dockerfile and README.md)
+├── collaboration_tools/   // Collaboration tools microservices (with Dockerfile and README.md)
+├── testing_frameworks/    // Testing microservices (with Dockerfile and README.md)
+├── project_management/    // Project management microservices (with Dockerfile and README.md)
+├── main_dashboard/        // Main dashboard service (with Dockerfile and README.md)
+└── backend_services/      // Backend core services (with Dockerfile and README.md)
 ```
 
-## Running the Application
+## Prerequisites
 
-1. Start all services using the provided script:
+- Docker installed on your system.
+- Docker Compose installed.
 
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
-.\start_services.ps1
-```
+## Installation & Setup
 
-2. Access the main dashboard at: `http://localhost:8000`
+1. Clone the repository:
 
-## Module Descriptions
+   ```bash
+   git clone https://github.com/wrong24/SE_3.git
+   cd SE_3
+   ```
 
-### Project Management
+2. Build and run all services using Docker Compose:
 
-- SDLC Visualization (Port: 8001)
-- Work Breakdown Structure (Port: 8002)
-- Gantt Chart Creation (Port: 8003)
-- Resource Allocation (Port: 8004)
-- Risk Management (Port: 8005)
-
-### Collaboration Tools
-
-- Git Flow Simulation (Port: 8006)
-- PR & Merge Practice (Port: 8007)
-- Chat Simulation (Port: 8008)
-- Markdown Editor (Port: 8009)
-- File Sharing (Port: 8010)
-
-### Agile Methodology
-
-- Scrum Board (Port: 8011)
-- Kanban Board (Port: 8012)
-- User Stories (Port: 8013)
-- Sprint Planning (Port: 8014)
-- Burndown Chart (Port: 8015)
-
-### Testing Frameworks
-
-- Unit Testing (Port: 8016)
-- Integration Testing (Port: 8017)
-- TDD Simulation (Port: 8018)
-- Test Automation (Port: 8019)
-- CI/CD Pipeline (Port: 8020)
-
-## Accessing Database Data Through APIs
-
-Each backend service exposes API endpoints to interact with its associated database (SQLite):
-
-- **Progress Tracker:**
-
-  - GET current progress: `http://localhost:9000/progress`
-  - POST updates: `http://localhost:9000/progress`
-
-- **User Session Service:**
-
-  - Manage sessions: `http://localhost:9001/session`
-
-- **Dashboard Backend:**
-  - Main dashboard API: `http://localhost:9100/`
-
-Use your browser or API tools (e.g., Postman) to send requests to these endpoints.
-
-## Building and Running Containers
-
-For each topic or service group:
-
-1. Navigate into the folder (e.g., `Agile`) and run:
    ```bash
    docker-compose up --build
    ```
-2. To run all services at once, use the top-level `docker-compose.yml` (if available) that includes all six services.
 
-All containers are attached to a common network (`lab_network`), so they can communicate with one another if needed.
+   This command builds Docker images for all services and starts all containers as defined in the docker-compose.yml file located in the root directory.
 
-## Dependencies
+3. Alternatively, navigate into each service folder to build and run individually. For example, for Agile Methodology:
+   ```bash
+   cd agile_methodology
+   docker build -t agile_service .
+   docker run -p 8011-8015:8011-8015 agile_service
+   ```
 
-- FastAPI: Backend API framework
-- Streamlit: Frontend interface
-- SQLite: Data persistence
-- Plotly: Data visualization
-- PyTest: Testing framework
+## Running the Application
 
-For complete list, see `requirements.txt`
+- **Using Docker Compose:**  
+  All microservices are orchestrated via the top-level docker-compose.yml. Upon running `docker-compose up --build`, every service (dashboard, backend, agile, collaboration, testing, project management) will start. The main dashboard (Port: 8000) aggregates data from each microservice.
 
-## Development
+- **Individual Service Details:**  
+  Please refer to the README.md files within each service folder for specific API endpoints and usage instructions.
 
-### Adding New Exercises
+## API Endpoints Overview
 
-1. Create new directory under appropriate category
-2. Implement backend.py and main.py
-3. Add service to start_services.ps1
-4. Update main dashboard
+### Main Dashboard (Port: 8000)
 
-### Running Tests
+- GET /dashboard – Retrieve an overview of all microservice statuses.
+- POST /update – Update dashboard configuration.
 
-```powershell
-pytest
+### Backend Services
+
+- **Progress Tracker (Port: 9000):**
+  - GET /progress – Retrieve current progress.
+  - POST /progress – Update progress data.
+- **User Session Service (Port: 9001):**
+  - GET /session – Retrieve active sessions.
+  - POST /session – Update session information.
+- **Dashboard API (Port: 9100):**
+  - GET / – Get consolidated data for dashboard display.
+
+For details on API endpoints for Agile, Collaboration, Testing, and Project Management services, refer to their respective README.md files.
+
+## Docker Compose Setup
+
+The top-level docker-compose.yml (in the root folder) defines the configuration for all microservices, including network settings (using the common network `lab_network`). Running:
+
+```bash
+docker-compose up --build
 ```
+
+will build and launch every service container.
 
 ## Troubleshooting
 
-1. Port conflicts:
+- Ensure all required ports (8000–8020, 9000, 9001, 9100) are available.
+- Check service logs with:
+  ```bash
+  docker logs <container_name>
+  ```
+- Verify individual service endpoints as documented in each service's README.md.
 
-   - Check if ports 8000-8020 are available
-   - Modify port numbers in start_services.ps1 if needed
+## Contributing
 
-2. Database issues:
-   - Delete .db files to reset
-   - Check write permissions
+Contributions are welcome. Please submit a pull request with a detailed description of your changes.
+
+## License
+
+[MIT License](LICENSE)
+
+Enjoy exploring and learning with the Virtual Software Engineering Lab!
