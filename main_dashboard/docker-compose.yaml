@@ -6,8 +6,9 @@ services:
       dockerfile: Dockerfile
     # This container runs the Streamlit main dashboard (and any UI-related code)
     ports:
-      - "8501:8501"
-      - "9100:9100"
+      - "8000:8000"
+      - "9000:9000"
+      - "9001:9001"
     networks:
       - lab_network
 

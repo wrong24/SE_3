@@ -36,6 +36,17 @@ services:
     networks:
       - lab_network
 
+  backend_services:
+    build:
+      context: ./backend_services
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+      - "9100:9100"
+    networks:
+      - lab_network
+
   main_services:
     build:
       context: ./main_dashboard
@@ -45,17 +56,6 @@ services:
       - "9100:9100"
       - "9000:9000"
       - "9001:9001"
-    networks:
-      - lab_network
-
-  backend_services:
-    build:
-      context: ./backend_services
-      dockerfile: Dockerfile
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-      - "9100:9100"
     networks:
       - lab_network
 

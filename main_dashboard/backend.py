@@ -100,7 +100,7 @@ async def get_recommendations(user_id: str):
         raise HTTPException(status_code=500, detail="Could not fetch progress data")
     
     completed_items = progress_response.json()
-    
+
     # Get topic statistics
     conn = sqlite3.connect('dashboard.db')
     c = conn.cursor()
@@ -126,7 +126,3 @@ async def get_recommendations(user_id: str):
     # Sort by completion (ascending) and popularity (descending)
     recommendations.sort(key=lambda x: (x["completion"], -x["popularity"]))
     return {"recommendations": recommendations[:3]}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=9100)
