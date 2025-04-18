@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  agile:
+    build:
+      context: ./Agile
+      dockerfile: Dockerfile
+    ports:
+      - "8011-8015:8011-8015"
+    networks:
+      - lab_network
+
+  collaboration:
+    build:
+      context: ./Collaboration
+      dockerfile: Dockerfile
+    ports:
+      - "8006-8010:8006-8010"
+    networks:
+      - lab_network
+
+  project_management:
+    build:
+      context: ./ProjectManagement
+      dockerfile: Dockerfile
+    ports:
+      - "8001-8005:8001-8005"
+    networks:
+      - lab_network
+
+  testing_tools:
+    build:
+      context: ./TestingTools
+      dockerfile: Dockerfile
+    ports:
+      - "8016-8020:8016-8020"
+    networks:
+      - lab_network
+
+  main_services:
+    build:
+      context: ./MainServices
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+      - "9100:9100"
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - lab_network
+
+networks:
+  lab_network:
+    driver: bridge

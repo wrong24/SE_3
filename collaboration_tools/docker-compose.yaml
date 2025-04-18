@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  collaboration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8006-8010:8006-8010"
+    networks:
+      - lab_network
+
+networks:
+  lab_network:
+    driver: bridge

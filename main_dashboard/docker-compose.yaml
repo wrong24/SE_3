@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  main_dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # This container runs the Streamlit main dashboard (and any UI-related code)
+    ports:
+      - "8501:8501"
+    networks:
+      - lab_network
+
+networks:
+  lab_network:
+    driver: bridge

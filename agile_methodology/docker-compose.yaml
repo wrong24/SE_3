@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  agile:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Expose each agile service port individually if needed.
+    ports:
+      - "8011-8015:8011-8015"
+    networks:
+      - lab_network
+
+networks:
+  lab_network:
+    driver: bridge
