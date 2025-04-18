@@ -6,10 +6,38 @@ import subprocess
 # Add after imports
 def verify_service(port: int) -> bool:
     try:
-        response = requests.get(f'http://localhost:{port}/', timeout=2)
+        # Get service name based on port
+        service_name = get_service_name(port)
+        response = requests.get(f'http://{service_name}/', timeout=2)
         return response.status_code == 200
     except:
         return False
+
+def get_service_name(port: int) -> str:
+    # Map ports to service names defined in docker-compose
+    port_to_service = {
+        8001: "sdlc_service",
+        8002: "wbs_service",
+        8003: "gantt_service",
+        8004: "resource_service",
+        8005: "risk_service",
+        8006: "git_service",
+        8007: "pr_service",
+        8008: "chat_service",
+        8009: "markdown_service",
+        8010: "fileshare_service",
+        8011: "scrum_service",
+        8012: "kanban_service",
+        8013: "stories_service",
+        8014: "sprint_service",
+        8015: "burndown_service",
+        8016: "unit_test_service",
+        8017: "integration_test_service",
+        8018: "tdd_service",
+        8019: "automation_service",
+        8020: "cicd_service"
+    }
+    return port_to_service.get(port, "unknown_service")
 
 # Function to launch a Streamlit script in a new console
 def launch_streamlit(command: str):
@@ -45,7 +73,7 @@ TOPICS: Dict = {
 
 def get_progress():
     try:
-        response = requests.get("http://localhost:9000/progress")
+        response = requests.get("http://progress_service:9000/progress")
         return response.json() if response.status_code == 200 else {}
     except:
         return {}
@@ -90,15 +118,13 @@ for topic, details in TOPICS.items():
                 st.write("🟢" if service_status else "🔴")
             with col3:
                 if st.button("Start", key=f"btn_{topic}_{subtopic}", disabled=not service_status):
-                    # If the subtopic is SDLC under Project Management, launch its streamlit app instead of redirecting via JS.
                     if topic == "Project Management" and subtopic == "SDLC":
-                        # Adjust the path if needed (ex: project_management/sdlc/main.py)
                         launch_streamlit("streamlit run project_management/sdlc/main.py")
                     else:
-                        # Fallback to window redirect if not a streamlit app
+                        service_name = get_service_name(port)
                         js = f"""
                         <script>
-                            window.open('http://localhost:{port}/', '_blank');
+                            window.open('http://{service_name}/', '_blank');
                         </script>
                         """
                         st.components.v1.html(js, height=0)

@@ -7,6 +7,7 @@ services:
     # This container runs the Streamlit main dashboard (and any UI-related code)
     ports:
       - "8501:8501"
+      - "9100:9100"
     networks:
       - lab_network
 

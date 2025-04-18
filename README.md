@@ -6,10 +6,10 @@ This project is a comprehensive virtual laboratory that leverages Docker to cont
 
 The lab provides hands-on experience with the following microservices:
 
-- **Agile Methodology Services:** Scrum Board, Kanban Board, User Stories, Sprint Planning, Burndown Chart (Ports: 8011–8015)
-- **Collaboration Tools:** Git Flow Simulation, PR & Merge Practice, Chat Simulation, Markdown Editor, File Sharing (Ports: 8006–8010)
-- **Testing Frameworks:** Unit Testing, Integration Testing, TDD Simulation, Test Automation, CI/CD Pipeline (Ports: 8016–8020)
 - **Project Management:** SDLC Visualization, Work Breakdown Structure, Gantt Chart Creation, Resource Allocation, Risk Management (Ports: 8001–8005)
+- **Collaboration Tools:** Git Flow Simulation, PR & Merge Practice, Chat Simulation, Markdown Editor, File Sharing (Ports: 8006–8010)
+- **Agile Methodology Services:** Scrum Board, Kanban Board, User Stories, Sprint Planning, Burndown Chart (Ports: 8011–8015)
+- **Testing Frameworks:** Unit Testing, Integration Testing, TDD Simulation, Test Automation, CI/CD Pipeline (Ports: 8016–8020)
 - **Main Dashboard:** Aggregates data from all microservices (Port: 8000)
 - **Backend Services:** Progress Tracker, User Session Service, Dashboard API (Ports: 9000, 9001, 9100)
 

@@ -2,7 +2,7 @@ version: '3.8'
 services:
   agile:
     build:
-      context: ./Agile
+      context: ./agile_methodology
       dockerfile: Dockerfile
     ports:
       - "8011-8015:8011-8015"
@@ -11,7 +11,7 @@ services:
 
   collaboration:
     build:
-      context: ./Collaboration
+      context: ./collaboration_tools
       dockerfile: Dockerfile
     ports:
       - "8006-8010:8006-8010"
@@ -20,7 +20,7 @@ services:
 
   project_management:
     build:
-      context: ./ProjectManagement
+      context: ./project_management
       dockerfile: Dockerfile
     ports:
       - "8001-8005:8001-8005"
@@ -29,7 +29,7 @@ services:
 
   testing_tools:
     build:
-      context: ./TestingTools
+      context: ./testing_frameworks
       dockerfile: Dockerfile
     ports:
       - "8016-8020:8016-8020"
@@ -38,13 +38,24 @@ services:
 
   main_services:
     build:
-      context: ./MainServices
+      context: ./main_dashboard
       dockerfile: Dockerfile
     ports:
       - "8501:8501"
       - "9100:9100"
       - "9000:9000"
       - "9001:9001"
+    networks:
+      - lab_network
+
+  backend_services:
+    build:
+      context: ./backend_services
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+      - "9100:9100"
     networks:
       - lab_network
 

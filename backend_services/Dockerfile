@@ -1,6 +1,8 @@
 FROM python:3.9-slim
 WORKDIR /app
-# ...existing code: copy backend service files...
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 EXPOSE 9000 9001 9100
-CMD ["python", "start_backend.py"]
+RUN chmod +x start_services.sh
+CMD ["./start_services.sh"]

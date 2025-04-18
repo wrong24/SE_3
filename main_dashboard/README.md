@@ -2,14 +2,61 @@
 
 This folder contains the main dashboard which aggregates microservice outputs:
 
-- **Dashboard API (Port: 8000):**
-  - GET /dashboard for an overview of service statuses.
-  - POST /update to push configuration changes.
-- Interconnects with other microservices by retrieving their data.
+## Microservices Overview
 
-To run:
+### 1. Dashboard API (Port: 8000)
+
+#### Endpoint: Get Dashboard Overview
+
+- **URL:** `GET /dashboard`
+- **Headers:**  
+  `Authorization: Bearer <token>`
+- **Response:**
+  ```json
+  {
+    "status": "success",
+    "services": [
+      {
+        "name": "string",
+        "status": "string",
+        "lastUpdated": "date"
+      }
+    ]
+  }
+  ```
+
+#### Endpoint: Push Configuration Changes
+
+- **URL:** `POST /update`
+- **Headers:**  
+  `Authorization: Bearer <token>`
+- **Body:**
+  ```json
+  {
+    "configKey": "string",
+    "configValue": "string"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Configuration updated successfully",
+    "updatedConfig": {
+      "configKey": "string",
+      "configValue": "string"
+    }
+  }
+  ```
+
+---
+
+## Running the Service
+
+To build and run the service:
 
 ```
 docker build -t dashboard_service .
 docker run -p 8000:8000 dashboard_service
 ```
+
+Ensure all required environment variables are set for the service.
