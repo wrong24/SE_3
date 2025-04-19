@@ -54,7 +54,7 @@ async def download_file(filename: str):
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Collaboration Tools", "subtopic": "File Sharing"}
         )
         return {"status": "success"}

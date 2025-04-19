@@ -95,7 +95,7 @@ async def track_topic_visit(topic: str):
 @app.get("/dashboard/recommendations/{user_id}")
 async def get_recommendations(user_id: str):
     # Get user's progress
-    progress_response = requests.get("http://localhost:9000/progress")
+    progress_response = requests.get("http://backend_services:9000/progress")
     if progress_response.status_code != 200:
         raise HTTPException(status_code=500, detail="Could not fetch progress data")
     

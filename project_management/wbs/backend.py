@@ -49,7 +49,7 @@ async def update_task(task_id: str, status: str):
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Project Management", "subtopic": "WBS"}
         )
         return {"status": "success"}

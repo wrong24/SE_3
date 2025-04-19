@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  collaboration:
+  collaboration_tools:
     build:
       context: .
       dockerfile: Dockerfile

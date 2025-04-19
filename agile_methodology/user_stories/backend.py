@@ -52,7 +52,7 @@ async def update_story(story_id: str, story: UserStory):
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Agile Methodology", "subtopic": "User Stories"}
         )
         return {"status": "success"}

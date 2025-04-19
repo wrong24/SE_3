@@ -70,7 +70,7 @@ async def get_state():
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Collaboration Tools", "subtopic": "Git Flow"}
         )
         return {"status": "success"}

@@ -4,7 +4,7 @@ This folder contains the main dashboard which aggregates microservice outputs:
 
 ## Microservices Overview
 
-### 1. Dashboard API (Port: 8000)
+### 1. Dashboard API (Port: 8501)
 
 #### Endpoint: Get Dashboard Overview
 
@@ -56,7 +56,7 @@ To build and run the service:
 
 ```
 docker build -t dashboard_service .
-docker run -p 8000:8000 dashboard_service
+docker run -p 8501:8501 dashboard_service
 ```
 
 Ensure all required environment variables are set for the service.

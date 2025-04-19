@@ -44,7 +44,7 @@ async def update_phase(phase: int):
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Project Management", "subtopic": "SDLC"}
         )
         return {"status": "success"}

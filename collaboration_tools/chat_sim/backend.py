@@ -68,7 +68,7 @@ async def get_chat_stats():
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Collaboration Tools", "subtopic": "Chat Simulation"}
         )
         if response.status_code != 200:

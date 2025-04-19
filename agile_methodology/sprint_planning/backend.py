@@ -61,7 +61,7 @@ async def get_sprint():
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Agile Methodology", "subtopic": "Sprint Planning"}
         )
         return {"status": "success"}

@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  agile:
+  agile_methodology:
     build:
       context: .
       dockerfile: Dockerfile

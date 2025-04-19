@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  agile:
+  agile_methodology:
     build:
       context: ./agile_methodology
       dockerfile: Dockerfile
@@ -9,7 +9,7 @@ services:
     networks:
       - lab_network
 
-  collaboration:
+  collaboration_tools:
     build:
       context: ./collaboration_tools
       dockerfile: Dockerfile
@@ -27,7 +27,7 @@ services:
     networks:
       - lab_network
 
-  testing_tools:
+  testing_frameworks:
     build:
       context: ./testing_frameworks
       dockerfile: Dockerfile
@@ -43,7 +43,6 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
-      - "9100:9100"
     networks:
       - lab_network
 
@@ -52,10 +51,9 @@ services:
       context: ./main_dashboard
       dockerfile: Dockerfile
     ports:
+      - "8000:8000"
       - "8501:8501"
       - "9100:9100"
-      - "9000:9000"
-      - "9001:9001"
     networks:
       - lab_network
 

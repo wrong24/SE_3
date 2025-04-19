@@ -58,7 +58,7 @@ async def get_board():
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Agile Methodology", "subtopic": "Scrum Board"}
         )
         return {"status": "success"}

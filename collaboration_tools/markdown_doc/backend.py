@@ -52,7 +52,7 @@ async def list_documents():
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Collaboration Tools", "subtopic": "Markdown Documentation"}
         )
         return {"status": "success"}

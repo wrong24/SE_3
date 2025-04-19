@@ -53,7 +53,7 @@ async def run_test(test_case: TestCase):
 async def complete_exercise():
     try:
         response = requests.post(
-            "http://localhost:9000/progress",
+            "http://backend_services:9000/progress",
             json={"topic": "Testing Frameworks", "subtopic": "Unit Testing"}
         )
         return {"status": "success"}
