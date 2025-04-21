@@ -62,7 +62,14 @@ st.sidebar.write("""
 """)
 
 if st.button("Complete Exercise"):
-    response = requests.post("http://agile_methodology:8012/complete_exercise")
+    current_lab = st.session_state.get("current_lab", {})
+    response = requests.post(
+        "http://agile_methodology:8012/complete_exercise",
+        json={
+            "user_id": current_lab.get("user_id"),
+            "start_time": current_lab.get("start_time")
+        }
+    )
     if response.status_code == 200:
         st.success("Exercise completed!")
-        st.markdown('[Return to Dashboard](http://main_services:8000)')
+        st.markdown('[Return to Dashboard](http://main_services:8080)')

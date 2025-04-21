@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
-from typing import List
+from typing import List, Optional
 import shutil
 import os
 import requests
@@ -51,11 +51,16 @@ async def download_file(filename: str):
     raise HTTPException(status_code=404, detail="File not found")
 
 @app.post("/complete_exercise")
-async def complete_exercise():
+async def complete_exercise(user_id: Optional[str] = None, start_time: Optional[float] = None):
     try:
         response = requests.post(
             "http://backend_services:9000/progress",
-            json={"topic": "Collaboration Tools", "subtopic": "File Sharing"}
+            json={
+                "topic": "Collaboration Tools", 
+                "subtopic": "File Share",
+                "user_id": user_id,
+                "start_time": start_time
+            }
         )
         return {"status": "success"}
     except Exception as e:

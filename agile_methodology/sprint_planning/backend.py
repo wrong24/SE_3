@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 from datetime import datetime, timedelta
 import requests
 from fastapi.middleware.cors import CORSMiddleware
@@ -58,11 +58,16 @@ async def get_sprint():
     return current_sprint
 
 @app.post("/complete_exercise")
-async def complete_exercise():
+async def complete_exercise(user_id: Optional[str] = None, start_time: Optional[float] = None):
     try:
         response = requests.post(
             "http://backend_services:9000/progress",
-            json={"topic": "Agile Methodology", "subtopic": "Sprint Planning"}
+            json={
+                "topic": "Agile Methodology", 
+                "subtopic": "Sprint Planning",
+                "user_id": user_id,
+                "start_time": start_time
+            }
         )
         return {"status": "success"}
     except Exception as e:

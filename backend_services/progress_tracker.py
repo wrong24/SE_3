@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import sqlite3
 from typing import List, Optional
+import requests
+import time
 
 app = FastAPI()
 
@@ -20,6 +22,8 @@ init_db()
 class Progress(BaseModel):
     topic: str
     subtopic: str
+    user_id: Optional[str] = None
+    start_time: Optional[float] = None
 
 @app.get("/progress")
 async def get_progress() -> List[str]:
@@ -43,6 +47,31 @@ async def update_progress(progress: Progress):
                  [topic_subtopic])
         conn.commit()
         conn.close()
+
+        # If user_id is provided, notify integration API about completion
+        if progress.user_id:
+            try:
+                # Calculate time spent if start_time is provided
+                time_spent = 0
+                if progress.start_time:
+                    time_spent = time.time() - progress.start_time
+
+                # Notify progress tracker API
+                attempt_payload = {
+                    "user_id": progress.user_id,
+                    "lab_type": progress.subtopic,
+                    "completion_status": "completed",
+                    "time_spent": time_spent,
+                    "errors_encountered": 0
+                }
+                requests.post(
+                    "http://integration:8024/progress/lab-attempt",
+                    json=attempt_payload,
+                    timeout=5
+                )
+            except Exception as e:
+                print(f"Failed to notify integration API: {e}")
+
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

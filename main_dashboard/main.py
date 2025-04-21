@@ -3,8 +3,27 @@ import requests
 from typing import Dict
 import subprocess
 import os
+import uuid
+import time
 
-# Add after imports
+st.set_page_config(initial_sidebar_state="collapsed")
+
+# Optional: Hide the hamburger menu and footer entirely using CSS
+hide_sidebar_style = """
+    <style>
+        [data-testid="stSidebarNav"] { display: none; }
+        [data-testid="stSidebar"] { display: none !important; }
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_sidebar_style, unsafe_allow_html=True)
+
+# Redirect to login if not logged in
+if "user_id" not in st.session_state:
+    st.warning("Please login to continue.")
+    st.switch_page("pages/login.py")
+
 def verify_service(service_name: str, port: int) -> bool:
     try:
         response = requests.get(f'http://{service_name}:{port}/', timeout=2)
@@ -69,7 +88,7 @@ TOPICS: Dict = {
 
 def get_progress():
     try:
-        response = requests.get("http://progress_service:9000/progress")
+        response = requests.get("http://integration:8024/progress")
         return response.json() if response.status_code == 200 else {}
     except:
         return {}
@@ -78,6 +97,23 @@ def calculate_progress(topic: str, completed_items: Dict) -> float:
     topic_subtopics = set([f"{topic}_{sub}" for sub in TOPICS[topic]["subtopics"]])
     completed = topic_subtopics.intersection(set(completed_items))
     return len(completed) / len(topic_subtopics) * 100
+
+def get_lab_attempts(user_id: str, lab_type: str):
+    try:
+        response = requests.get(f"http://integration:8024/progress/stats/{user_id}")
+        if response.status_code == 200:
+            stats = response.json()
+            # Extract lab-specific stats from the breakdown
+            lab_stats = stats.get("breakdown", {}).get(lab_type, {})
+            return {
+                "total_attempts": lab_stats.get("total_attempts", 0),
+                "successful_attempts": lab_stats.get("successful_attempts", 0),
+                "success_rate": lab_stats.get("success_rate", 0),
+                "average_time": lab_stats.get("average_time_per_attempt", "N/A")
+            }
+    except Exception as e:
+        print(f"Failed to fetch lab attempts: {e}")
+    return None
 
 st.title("Virtual Software Engineering Lab")
 st.write("Welcome to your interactive software engineering learning environment!")
@@ -106,28 +142,69 @@ for topic, details in TOPICS.items():
             completed = f"{topic}_{subtopic}" in completed_items
             status = "✅" if completed else "⬜"
             
-            col1, col2, col3 = st.columns([3, 1, 1])
+            col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
             with col1:
                 st.write(f"{status} {subtopic}")
             with col2:
                 service_status = verify_service(details["service_name"], details["port"])
                 st.write("🟢" if service_status else "🔴")
             with col3:
+                if st.button("Attempts", key=f"attempts_{topic}_{subtopic}"):
+                    user_id = st.session_state.get("user_id", "anonymous")
+                    stats = get_lab_attempts(user_id, subtopic)
+                    if stats:
+                        st.sidebar.title(f"{subtopic} Statistics")
+                        st.sidebar.write(f"Total Attempts: {stats['total_attempts']}")
+                        st.sidebar.write(f"Successful Attempts: {stats['successful_attempts']}")
+                        st.sidebar.write(f"Success Rate: {stats['success_rate']}%")
+                        st.sidebar.write(f"Average Time: {stats['average_time']}")
+                    else:
+                        st.sidebar.warning("No attempt data available")
+            with col4:
                 if st.button("Start", key=f"btn_{topic}_{subtopic}", disabled=not service_status):
+                    # Track lab start event
+                    try:
+                        session_id = str(uuid.uuid4())
+                        user_id = st.session_state.get("user_id", "anonymous")
+                        start_time = time.time()
+                        
+                        # Record attempt start
+                        attempt_payload = {
+                            "user_id": user_id,
+                            "lab_type": subtopic,
+                            "completion_status": "started",
+                            "time_spent": 0,
+                            "errors_encountered": 0
+                        }
+                        requests.post("http://integration:8024/progress/lab-attempt", json=attempt_payload)
+                        
+                        # Store start time in session state
+                        st.session_state[f"lab_start_{subtopic}"] = start_time
+                        
+                        # Store lab info in session state
+                        st.session_state["current_lab"] = {
+                            "topic": topic,
+                            "subtopic": subtopic,
+                            "user_id": user_id,
+                            "start_time": start_time
+                        }
+                        
+                        # Track analytics
+                        analytics_url = "http://integration:8022/analytics/event"
+                        analytics_payload = {
+                            "user_id": user_id,
+                            "lab_type": subtopic,
+                            "event_type": "start",
+                            "event_data": {"session_id": session_id}
+                        }
+                        requests.post(analytics_url, json=analytics_payload, timeout=2)
+                    except Exception as e:
+                        print(f"Analytics tracking failed: {e}")
+                        
+                    # Launch the lab
                     if details["streamlit_path"]:
-                        # Always launch on port 8501
-                        streamlit_app_path = details["streamlit_path"]
-                        # Kill any process using port 8501 before starting a new one
-                        import psutil
-                        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-                            try:
-                                if 'streamlit' in proc.info['name'].lower() or \
-                                   (proc.info['cmdline'] and any('streamlit' in arg for arg in proc.info['cmdline'])):
-                                    if proc.info['cmdline'] and any('--server.port=8501' in arg for arg in proc.info['cmdline']):
-                                        proc.kill()
-                            except Exception:
-                                pass
-                        subprocess.Popen(["streamlit", "run", streamlit_app_path, "--server.port=8501"])
+                        page_name = details['streamlit_path']
+                        st.switch_page(f"pages/{page_name}")
                     else:
                         js = f"""
                         <script>

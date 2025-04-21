@@ -49,11 +49,16 @@ async def update_story(story_id: str, story: UserStory):
     raise HTTPException(status_code=404, detail="Story not found")
 
 @app.post("/complete_exercise")
-async def complete_exercise():
+async def complete_exercise(user_id: Optional[str] = None, start_time: Optional[float] = None):
     try:
         response = requests.post(
             "http://backend_services:9000/progress",
-            json={"topic": "Agile Methodology", "subtopic": "User Stories"}
+            json={
+                "topic": "Agile Methodology", 
+                "subtopic": "User Stories",
+                "user_id": user_id,
+                "start_time": start_time
+            }
         )
         return {"status": "success"}
     except Exception as e:

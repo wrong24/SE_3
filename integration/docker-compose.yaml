@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  integration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8022-8026:8022-8026"
+    networks:
+      - lab_network
+      - virtual-labs-network
+
+networks:
+  lab_network:
+    driver: bridge
+  virtual-labs-network:
+    external: true
+

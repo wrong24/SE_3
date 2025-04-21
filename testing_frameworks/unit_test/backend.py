@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from typing import List, Dict, Optional
 import requests
 import pytest
 import io
@@ -50,11 +51,16 @@ async def run_test(test_case: TestCase):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/complete_exercise")
-async def complete_exercise():
+async def complete_exercise(user_id: Optional[str] = None, start_time: Optional[float] = None):
     try:
         response = requests.post(
             "http://backend_services:9000/progress",
-            json={"topic": "Testing Frameworks", "subtopic": "Unit Testing"}
+            json={
+                "topic": "Testing Frameworks", 
+                "subtopic": "Unit Testing",
+                "user_id": user_id,
+                "start_time": start_time
+            }
         )
         return {"status": "success"}
     except Exception as e:

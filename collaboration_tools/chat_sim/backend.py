@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 import time
 import requests
 from fastapi.middleware.cors import CORSMiddleware
@@ -65,17 +65,20 @@ async def get_chat_stats():
         raise HTTPException(status_code=500, detail=f"Error getting chat stats: {str(e)}")
 
 @app.post("/complete_exercise")
-async def complete_exercise():
+async def complete_exercise(user_id: Optional[str] = None, start_time: Optional[float] = None):
     try:
         response = requests.post(
             "http://backend_services:9000/progress",
-            json={"topic": "Collaboration Tools", "subtopic": "Chat Simulation"}
+            json={
+                "topic": "Collaboration Tools", 
+                "subtopic": "Chat Simulation",
+                "user_id": user_id,
+                "start_time": start_time
+            }
         )
-        if response.status_code != 200:
-            raise HTTPException(status_code=response.status_code, detail="Failed to update progress")
-        return {"status": "success", "message": "Exercise completed successfully"}
+        return {"status": "success"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error completing exercise: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn

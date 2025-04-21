@@ -46,6 +46,16 @@ services:
     networks:
       - lab_network
 
+  integration:
+    build:
+      context: ./integration
+      dockerfile: Dockerfile
+    ports:
+      - "8022-8026:8022-8026"  # Analytics tracker
+    networks:
+      - lab_network
+      - virtual-labs-network
+
   main_services:
     build:
       context: ./main_dashboard
@@ -60,3 +70,6 @@ services:
 networks:
   lab_network:
     driver: bridge
+  virtual-labs-network:
+    driver: bridge
+    external: true

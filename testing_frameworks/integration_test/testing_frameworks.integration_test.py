@@ -12,7 +12,7 @@ if 'test_history' not in st.session_state:
     st.session_state.test_history = []
 
 # Get available services
-response = requests.get("http://localhost:8017/services")
+response = requests.get("http://testing_frameworks:8017/services")
 if response.status_code == 200:
     services = response.json()
     
@@ -56,7 +56,7 @@ if response.status_code == 200:
             }
             
             response = requests.post(
-                "http://localhost:8017/test/integration",
+                "http://testing_frameworks:8017/test/integration",
                 json=test_case
             )
             
@@ -123,7 +123,7 @@ with st.sidebar:
 # Complete exercise button
 if len(st.session_state.test_history) >= 3:
     if st.button("Complete Exercise"):
-        response = requests.post("http://localhost:8017/complete_exercise")
+        response = requests.post("http://testing_frameworks:8017/complete_exercise")
         if response.status_code == 200:
             st.success("Exercise completed!")
-            st.markdown('[Return to Dashboard](http://localhost:8000)')
+            st.markdown('[Return to Dashboard](http://main_services:8000)')

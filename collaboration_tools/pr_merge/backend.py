@@ -66,11 +66,16 @@ async def get_code(branch: str):
     return {"code": code_changes[branch]}
 
 @app.post("/complete_exercise")
-async def complete_exercise():
+async def complete_exercise(user_id: Optional[str] = None, start_time: Optional[float] = None):
     try:
         response = requests.post(
             "http://backend_services:9000/progress",
-            json={"topic": "Collaboration Tools", "subtopic": "Pull Request & Merge"}
+            json={
+                "topic": "Collaboration Tools", 
+                "subtopic": "PR & Merge",
+                "user_id": user_id,
+                "start_time": start_time
+            }
         )
         return {"status": "success"}
     except Exception as e:

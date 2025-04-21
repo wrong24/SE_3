@@ -34,7 +34,7 @@ with col2:
 
 if st.button("Run Tests"):
     response = requests.post(
-        "http://localhost:8016/run_test",
+        "http://testing_frameworks:8016/run_test",
         json={
             "function_code": function_code,
             "test_code": test_code
@@ -65,7 +65,7 @@ with st.sidebar:
 
 # Exercise completion criteria
 if st.button("Complete Exercise"):
-    response = requests.post("http://localhost:8016/complete_exercise")
+    response = requests.post("http://testing_frameworks:8016/complete_exercise")
     if response.status_code == 200:
         st.success("Exercise completed!")
-        st.markdown('[Return to Dashboard](http://localhost:8000)')
+        st.markdown('[Return to Dashboard](http://main_services:8000)')

@@ -46,11 +46,16 @@ async def update_task(task_id: str, status: str):
     raise HTTPException(status_code=404, detail="Task not found")
 
 @app.post("/complete_exercise/")
-async def complete_exercise():
+async def complete_exercise(user_id: Optional[str] = None, start_time: Optional[float] = None):
     try:
         response = requests.post(
             "http://backend_services:9000/progress",
-            json={"topic": "Project Management", "subtopic": "WBS"}
+            json={
+                "topic": "Project Management", 
+                "subtopic": "WBS",
+                "user_id": user_id,
+                "start_time": start_time
+            }
         )
         return {"status": "success"}
     except Exception as e:

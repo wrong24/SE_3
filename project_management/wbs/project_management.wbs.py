@@ -12,7 +12,7 @@ tasks = []
 
 # First try to get existing tasks
 try:
-    response = requests.get("http://localhost:8002/tasks/")
+    response = requests.get("http://project_management:8002/tasks/")
     if response.status_code == 200:
         tasks = response.json().get("tasks", [])
 except requests.exceptions.RequestException as e:
@@ -36,9 +36,9 @@ with st.form("new_task"):
             "parent_id": None if parent_task == "None" else next((t["id"] for t in tasks if t["name"] == parent_task), None)
         }
         try:
-            response = requests.post("http://localhost:8002/task/", json=task)
+            response = requests.post("http://project_management:8002/task/", json=task)
             if response.status_code == 200:
-                st.success("Task added!")
+                st.success("Task added successfully!")
                 st.rerun()
         except requests.exceptions.RequestException as e:
             st.error(f"Failed to add task: {e}")
@@ -94,10 +94,10 @@ if tasks:
     if len(tasks) >= 5:
         if st.button("Complete Exercise"):
             try:
-                response = requests.post("http://localhost:8002/complete_exercise")
+                response = requests.post("http://project_management:8002/complete_exercise")
                 if response.status_code == 200:
                     st.success("Exercise completed!")
-                    st.markdown('[Return to Dashboard](http://localhost:8000)')
+                    st.markdown('[Return to Dashboard](http://main_services:8000)')
             except requests.exceptions.RequestException as e:
                 st.error(f"Failed to complete exercise: {e}")
 else:

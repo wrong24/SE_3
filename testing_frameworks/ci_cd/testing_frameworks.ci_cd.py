@@ -50,7 +50,7 @@ with st.form("create_pipeline"):
                 "auto_rollback": auto_rollback
             }
         }
-        response = requests.post("http://localhost:8020/pipeline", json=pipeline)
+        response = requests.post("http://testing_frameworks:8020/pipeline", json=pipeline)
         if response.status_code == 200:
             st.success("Pipeline created!")
 
@@ -60,7 +60,7 @@ col1, col2 = st.columns([2, 3])
 
 with col1:
     # Pipeline list
-    response = requests.get("http://localhost:8020/pipelines")
+    response = requests.get("http://testing_frameworks:8020/pipelines")
     if response.status_code == 200:
         pipelines = response.json()["pipelines"]
         if pipelines:
@@ -80,7 +80,7 @@ with col1:
                     
                     if st.button("Run Pipeline", key=f"run_{pipeline['name']}"):
                         response = requests.post(
-                            "http://localhost:8020/run",
+                            "http://testing_frameworks:8020/run",
                             params={"pipeline_name": pipeline['name']}
                         )
                         if response.status_code == 200:
@@ -88,7 +88,7 @@ with col1:
 
 with col2:
     # Pipeline runs visualization
-    response = requests.get("http://localhost:8020/runs")
+    response = requests.get("http://testing_frameworks:8020/runs")
     if response.status_code == 200:
         runs = response.json()["runs"]
         if runs:
@@ -113,12 +113,12 @@ with st.sidebar:
     """)
 
 # Complete exercise button
-response = requests.get("http://localhost:8020/runs")
+response = requests.get("http://testing_frameworks:8020/runs")
 if response.status_code == 200:
     runs = response.json()["runs"]
     if len(runs) >= 1:
         if st.button("Complete Exercise"):
-            response = requests.post("http://localhost:8020/complete_exercise")
+            response = requests.post("http://testing_frameworks:8020/complete_exercise")
             if response.status_code == 200:
                 st.success("Exercise completed!")
-                st.markdown('[Return to Dashboard](http://localhost:8000)')
+                st.markdown('[Return to Dashboard](http://main_services:8000)')

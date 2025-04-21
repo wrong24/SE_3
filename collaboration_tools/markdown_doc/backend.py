@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from typing import List, Dict, Optional
 import markdown
 import requests
 from fastapi.middleware.cors import CORSMiddleware
@@ -49,11 +50,16 @@ async def list_documents():
     return {"documents": list(documents.keys())}
 
 @app.post("/complete_exercise")
-async def complete_exercise():
+async def complete_exercise(user_id: Optional[str] = None, start_time: Optional[float] = None):
     try:
         response = requests.post(
             "http://backend_services:9000/progress",
-            json={"topic": "Collaboration Tools", "subtopic": "Markdown Documentation"}
+            json={
+                "topic": "Collaboration Tools", 
+                "subtopic": "Markdown Editor",
+                "user_id": user_id,
+                "start_time": start_time
+            }
         )
         return {"status": "success"}
     except Exception as e:

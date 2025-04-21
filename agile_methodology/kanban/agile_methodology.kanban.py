@@ -20,13 +20,13 @@ with st.form("new_card"):
             "priority": priority,
             "status": "backlog"
         }
-        response = requests.post("http://localhost:8012/card", json=card)
+        response = requests.post("http://agile_methodology:8012/card", json=card)
         if response.status_code == 200:
             st.success("Card created!")
 
 # Display board
 st.header("Kanban Board")
-response = requests.get("http://localhost:8012/board")
+response = requests.get("http://agile_methodology:8012/board")
 if response.status_code == 200:
     board = response.json()
     
@@ -46,7 +46,7 @@ if response.status_code == 200:
                     )
                     if new_status != card['status']:
                         requests.put(
-                            f"http://localhost:8012/card/{card['id']}",
+                            f"http://agile_methodology:8012/card/{card['id']}",
                             params={"new_status": new_status}
                         )
                         st.experimental_rerun()
@@ -62,7 +62,7 @@ st.sidebar.write("""
 """)
 
 if st.button("Complete Exercise"):
-    response = requests.post("http://localhost:8012/complete_exercise")
+    response = requests.post("http://agile_methodology:8012/complete_exercise")
     if response.status_code == 200:
         st.success("Exercise completed!")
-        st.markdown('[Return to Dashboard](http://localhost:8000)')
+        st.markdown('[Return to Dashboard](http://main_services:8000)')

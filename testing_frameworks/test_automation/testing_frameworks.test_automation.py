@@ -34,7 +34,7 @@ with st.form("create_suite"):
             "tests": tests,
             "schedule": schedule
         }
-        response = requests.post("http://localhost:8019/suite", json=suite)
+        response = requests.post("http://testing_frameworks:8019/suite", json=suite)
         if response.status_code == 200:
             st.success("Test suite created!")
 
@@ -44,7 +44,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     # Test suite overview
-    response = requests.get("http://localhost:8019/suites")
+    response = requests.get("http://testing_frameworks:8019/suites")
     if response.status_code == 200:
         suites = response.json()["suites"]
         if suites:
@@ -61,12 +61,12 @@ with col1:
                             "failed": 1,
                             "execution_time": 2.5
                         }
-                        requests.post("http://localhost:8019/results", json=result)
+                        requests.post("http://testing_frameworks:8019/results", json=result)
                         st.success("Test suite executed!")
 
 with col2:
     # Results visualization
-    response = requests.get("http://localhost:8019/results")
+    response = requests.get("http://testing_frameworks:8019/results")
     if response.status_code == 200:
         results = response.json()["results"]
         if results:
@@ -92,12 +92,12 @@ with st.sidebar:
     """)
 
 # Complete exercise button
-response = requests.get("http://localhost:8019/results")
+response = requests.get("http://testing_frameworks:8019/results")
 if response.status_code == 200:
     results = response.json()["results"]
     if len(results) >= 3:
         if st.button("Complete Exercise"):
-            response = requests.post("http://localhost:8019/complete_exercise")
+            response = requests.post("http://testing_frameworks:8019/complete_exercise")
             if response.status_code == 200:
                 st.success("Exercise completed!")
-                st.markdown('[Return to Dashboard](http://localhost:8000)')
+                st.markdown('[Return to Dashboard](http://main_services:8000)')
