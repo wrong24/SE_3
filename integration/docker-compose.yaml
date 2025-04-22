@@ -14,5 +14,6 @@ networks:
   lab_network:
     driver: bridge
   virtual-labs-network:
+    driver: bridge
     external: true
 

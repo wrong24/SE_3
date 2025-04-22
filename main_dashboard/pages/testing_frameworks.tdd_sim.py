@@ -73,3 +73,6 @@ if len(cycles) >= 3:
         if response.status_code == 200:
             st.success("Exercise completed!")
             st.markdown('[Return to Dashboard](http://main_services:8000)')
+
+if st.button("Return to Dashboard"):
+    st.markdown("<meta http-equiv='refresh' content='0; url=http://localhost:8000'>", unsafe_allow_html=True)

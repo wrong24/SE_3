@@ -31,9 +31,11 @@ if submit:
         except Exception as e:
             st.error(f"Could not connect to user service: {e}")
 
-# Redirect to main page if already logged in
+
 if "user_id" in st.session_state:
-    st.switch_page("main_dashboard/main.py")
+    user_id = st.session_state["user_id"]
+    redirect_url = f"http://localhost:8000/?user_id={user_id}"
+    st.markdown(f"<meta http-equiv='refresh' content='0; url={redirect_url}'>", unsafe_allow_html=True)
 
 # Optionally, show current login status
 if "user_id" in st.session_state:

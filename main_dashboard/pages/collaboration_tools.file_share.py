@@ -52,6 +52,9 @@ if st.button("Complete Exercise"):
         st.success("Exercise completed! You can now move to the next topic.")
         st.markdown('[Return to Dashboard](http://main_services:8000)')
 
+if st.button("Return to Dashboard"):
+    st.markdown("<meta http-equiv='refresh' content='0; url=http://localhost:8000'>", unsafe_allow_html=True)
+
 # Instructions sidebar
 with st.sidebar:
     st.header("Instructions")

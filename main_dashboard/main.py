@@ -5,24 +5,24 @@ import subprocess
 import os
 import uuid
 import time
+from urllib.parse import urlparse, parse_qs
 
-st.set_page_config(initial_sidebar_state="collapsed")
+def ensure_authenticated():
+    # Get query parameters
+    query_params = st.query_params
 
-# Optional: Hide the hamburger menu and footer entirely using CSS
-hide_sidebar_style = """
-    <style>
-        [data-testid="stSidebarNav"] { display: none; }
-        [data-testid="stSidebar"] { display: none !important; }
-        footer {visibility: hidden;}
-        header {visibility: hidden;}
-    </style>
-"""
-st.markdown(hide_sidebar_style, unsafe_allow_html=True)
+    # If user_id is not in session state, check URL for it
+    if "user_id" not in st.session_state:
+        user_id_from_url = query_params.get("user_id")  # Retrieve user_id from URL query parameters
+        if user_id_from_url:
+            st.session_state["user_id"] = user_id_from_url  # Store user_id in session state
+            st.rerun()  # Re-run the app to reflect the updated session state
+        else:
+            st.warning("Please login to continue.")
+            st.switch_page("pages/login.py")  # Redirect to login page if no user_id in session state
 
-# Redirect to login if not logged in
-if "user_id" not in st.session_state:
-    st.warning("Please login to continue.")
-    st.switch_page("pages/login.py")
+ensure_authenticated()
+
 
 def verify_service(service_name: str, port: int) -> bool:
     try:
