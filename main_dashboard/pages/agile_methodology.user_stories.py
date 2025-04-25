@@ -1,9 +1,18 @@
 import streamlit as st
 import requests
 import uuid
+import urllib.parse
 
 st.set_page_config(page_title="User Stories Exercise", layout="wide")
 st.title("User Stories Exercise")
+
+# Restore session state from query params if present
+query_params = st.query_params
+if 'user_id' in query_params and 'start_time' in query_params:
+    st.session_state['current_lab'] = {
+        'user_id': query_params['user_id'][0],
+        'start_time': query_params['start_time'][0]
+    }
 
 # Create new user story form
 with st.form("new_story"):
@@ -64,4 +73,9 @@ if st.button("Complete Exercise"):
         st.markdown('[Return to Dashboard](http://main_services:8000)')
 
 if st.button("Return to Dashboard"):
-    st.markdown("<meta http-equiv='refresh' content='0; url=http://localhost:8000'>", unsafe_allow_html=True)
+    current_lab = st.session_state.get("current_lab", {})
+    st.session_state["session_params"] = {
+        "user_id": current_lab.get("user_id", ""),
+        "start_time": current_lab.get("start_time", "")
+    }
+    st.switch_page("main.py")

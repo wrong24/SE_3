@@ -30,6 +30,12 @@ async def proxy_user_management(path: str = "", request: Request = None):
             url = f"{BASE_URL}/users/{path}" if path else f"{BASE_URL}/users/"
             body = await request.body()
             headers = dict(request.headers)
+            # Remove headers that can cause issues
+            headers.pop('host', None)
+            headers.pop('content-length', None)
+            # Ensure Content-Type is set for JSON
+            if request.headers.get('content-type', '').startswith('application/json'):
+                headers['content-type'] = 'application/json'
 
             resp = await client.request(method, url, content=body, headers=headers)
             return Response(content=resp.content, status_code=resp.status_code, headers=resp.headers)

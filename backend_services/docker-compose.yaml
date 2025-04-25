@@ -1,33 +1,19 @@
 version: '3.8'
+
 services:
   backend_services:
     build:
-      context: .
-      dockerfile: Dockerfile
-    # Runs the backend for main dashboard
+      context: . # Assuming the Dockerfile and all necessary code are in the current directory or a subdirectory
+      dockerfile: Dockerfile # The Dockerfile must be configured to include all applications and run them
+    # List all ports required by the individual applications
     ports:
-      - "9100:9100"
+      - "9100:9100" # Port for the main dashboard backend (originally backend_services)
+      - "9000:9000" # Port for the progress tracker (originally progress_tracker)
+      - "9001:9001" # Port for the user session service (originally user_session)
     networks:
-      - lab_network
-
-  progress_tracker:
-    build:
-      context: ../backend_services  # Adjust context path as needed
-      dockerfile: Dockerfile          # You can create a Dockerfile here if not already present
-    ports:
-      - "9000:9000"
-    networks:
-      - lab_network
-
-  user_session:
-    build:
-      context: ../backend_services  # Adjust context path as needed
-      dockerfile: Dockerfile          # Create one to run the user_session service
-    ports:
-      - "9001:9001"
-    networks:
-      - lab_network
+      - lab_network # Connect to the shared network
 
 networks:
+  # Define the network
   lab_network:
     driver: bridge

@@ -102,3 +102,11 @@ if tasks:
                 st.error(f"Failed to complete exercise: {e}")
 else:
     st.info("No tasks found. Add some tasks to see the Work Breakdown Structure.")
+
+if st.button("Return to Dashboard"):
+    current_lab = st.session_state.get("current_lab", {})
+    st.session_state["session_params"] = {
+        "user_id": current_lab.get("user_id", ""),
+        "start_time": current_lab.get("start_time", "")
+    }
+    st.switch_page("main.py")

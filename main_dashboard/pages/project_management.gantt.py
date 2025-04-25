@@ -83,3 +83,11 @@ if len(tasks) >= 3 and all(task["progress"] == 100 for task in tasks):
         if response.status_code == 200:
             st.success("Exercise completed!")
             st.markdown('[Return to Dashboard](http://main_services:8000)')
+
+if st.button("Return to Dashboard"):
+    current_lab = st.session_state.get("current_lab", {})
+    st.session_state["session_params"] = {
+        "user_id": current_lab.get("user_id", ""),
+        "start_time": current_lab.get("start_time", "")
+    }
+    st.switch_page("main.py")

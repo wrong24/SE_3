@@ -67,7 +67,7 @@ if response.status_code == 200:
                         )
                         if response.status_code == 200:
                             st.success("PR approved and merged!")
-                            st.experimental_rerun()
+                            st.rerun()
                 
                 with col2:
                     if st.button("Reject", key=f"reject_{pr['id']}"):
@@ -77,7 +77,7 @@ if response.status_code == 200:
                         )
                         if response.status_code == 200:
                             st.error("PR rejected!")
-                            st.experimental_rerun()
+                            st.rerun()
 
 # Complete exercise button
 if st.button("Complete Exercise"):
@@ -87,7 +87,12 @@ if st.button("Complete Exercise"):
         st.markdown('[Return to Dashboard](http://main_services:8000)')
 
 if st.button("Return to Dashboard"):
-    st.markdown("<meta http-equiv='refresh' content='0; url=http://localhost:8000'>", unsafe_allow_html=True)
+    current_lab = st.session_state.get("current_lab", {})
+    st.session_state["session_params"] = {
+        "user_id": current_lab.get("user_id", ""),
+        "start_time": current_lab.get("start_time", "")
+    }
+    st.switch_page("main.py")
 
 # Instructions sidebar
 with st.sidebar:

@@ -87,6 +87,14 @@ if st.session_state.step >= len(steps):
             st.success("Exercise completed! You can now move to the next topic.")
             st.markdown('[Return to Dashboard](http://main_services:8000)')
 
+if st.button("Return to Dashboard"):
+    current_lab = st.session_state.get("current_lab", {})
+    st.session_state["session_params"] = {
+        "user_id": current_lab.get("user_id", ""),
+        "start_time": current_lab.get("start_time", "")
+    }
+    st.switch_page("main.py")
+
 # Instructions sidebar
 with st.sidebar:
     st.header("Instructions")

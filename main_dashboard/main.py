@@ -23,7 +23,7 @@ def ensure_authenticated():
 
 ensure_authenticated()
 
-
+@st.cache_data(ttl=300) # Add this line
 def verify_service(service_name: str, port: int) -> bool:
     try:
         response = requests.get(f'http://{service_name}:{port}/', timeout=2)
@@ -88,7 +88,7 @@ TOPICS: Dict = {
 
 def get_progress():
     try:
-        response = requests.get("http://integration:8024/progress")
+        response = requests.get("http://integration:8024/progress/")
         return response.json() if response.status_code == 200 else {}
     except:
         return {}
@@ -99,20 +99,36 @@ def calculate_progress(topic: str, completed_items: Dict) -> float:
     return len(completed) / len(topic_subtopics) * 100
 
 def get_lab_attempts(user_id: str, lab_type: str):
+    """
+    Fetches user stats from the API server (via proxy) and finds data
+    for a specific lab type.
+    Assumes the API server returns a structure with 'labs_attempted'.
+    """
     try:
-        response = requests.get(f"http://integration:8024/progress/stats/{user_id}")
-        if response.status_code == 200:
-            stats = response.json()
-            # Extract lab-specific stats from the breakdown
-            lab_stats = stats.get("breakdown", {}).get(lab_type, {})
-            return {
-                "total_attempts": lab_stats.get("total_attempts", 0),
-                "successful_attempts": lab_stats.get("successful_attempts", 0),
-                "success_rate": lab_stats.get("success_rate", 0),
-                "average_time": lab_stats.get("average_time_per_attempt", "N/A")
-            }
+        response = requests.get(f"http://integration:8024/progress/stats/{user_id}", timeout=10)
+        response.raise_for_status()
+
+        stats = response.json()
+
+        # Assuming API Server returns {'labs_attempted': [{'lab_type': 'SDLC', ...}, ...]}
+        labs_attempted_list = stats.get("labs_attempted", []) # Change from "breakdown"
+        lab_stats_found = None
+        for lab_entry in labs_attempted_list:
+            if lab_entry.get("lab_type") == lab_type:
+                lab_stats_found = lab_entry
+                break
+
+        return lab_stats_found if lab_stats_found else {
+             "attempts": 0,
+             "successful_attempts": 0,
+             "success_rate": 0,
+             "average_time": "N/A"
+        }
+
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to fetch lab attempts for user {user_id}, lab type {lab_type}: {e}")
     except Exception as e:
-        print(f"Failed to fetch lab attempts: {e}")
+         print(f"An unexpected error occurred fetching lab attempts: {e}")
     return None
 
 st.title("Virtual Software Engineering Lab")
@@ -130,7 +146,7 @@ for topic, details in TOPICS.items():
     
     with col1:
         progress = calculate_progress(topic, completed_items)
-        st.progress(progress)
+        st.progress(progress / 100) # Change this line
         st.write(f"Progress: {progress:.0f}%")
     
     with col2:
@@ -151,32 +167,42 @@ for topic, details in TOPICS.items():
             with col3:
                 if st.button("Attempts", key=f"attempts_{topic}_{subtopic}"):
                     user_id = st.session_state.get("user_id", "anonymous")
-                    stats = get_lab_attempts(user_id, subtopic)
-                    if stats:
+                    stats_for_this_lab = get_lab_attempts(user_id, subtopic)
+                    st.sidebar.empty()
+                    if stats_for_this_lab and stats_for_this_lab.get("total_attempts", 0) > 0: # Check if data exists and there's at least one attempt
                         st.sidebar.title(f"{subtopic} Statistics")
-                        st.sidebar.write(f"Total Attempts: {stats['total_attempts']}")
-                        st.sidebar.write(f"Successful Attempts: {stats['successful_attempts']}")
-                        st.sidebar.write(f"Success Rate: {stats['success_rate']}%")
-                        st.sidebar.write(f"Average Time: {stats['average_time']}")
+                        st.sidebar.write(f"Total Attempts: {stats_for_this_lab.get('total_attempts', 'N/A')}")
+                        st.sidebar.write(f"Successful Attempts: {stats_for_this_lab.get('successful_attempts', 'N/A')}")
+                        success_rate = stats_for_this_lab.get('success_rate', 0)
+                        st.sidebar.write(f"Success Rate: {success_rate * 100:.2f}%")
+                        average_time_value = stats_for_this_lab.get('average_time', 'N/A')
+                        if isinstance(average_time_value, (int, float)):
+                            st.sidebar.write(f"Average Time: {average_time_value:.2f} seconds") # Format if numeric
+                        else:
+                            st.sidebar.write(f"Average Time: {average_time_value}") # Display as is if 'N/A' or other string
                     else:
-                        st.sidebar.warning("No attempt data available")
+                        st.sidebar.warning(f"No attempt data available for {subtopic}.")
             with col4:
                 if st.button("Start", key=f"btn_{topic}_{subtopic}", disabled=not service_status):
                     # Track lab start event
                     try:
                         session_id = str(uuid.uuid4())
-                        user_id = st.session_state.get("user_id", "anonymous")
+
+                        user_id = st.session_state.get("user_id", "anonymous") if 'st' in globals() else "anonymous"
                         start_time = time.time()
-                        
-                        # Record attempt start
+
                         attempt_payload = {
                             "user_id": user_id,
-                            "lab_type": subtopic,
-                            "completion_status": "started",
-                            "time_spent": 0,
-                            "errors_encountered": 0
+                            "topic": topic,
+                            "subtopic": subtopic,
+                            "start_time": start_time,
+                            "completion_status": False,
+                            "errors_encountered": []
                         }
-                        requests.post("http://integration:8024/progress/lab-attempt", json=attempt_payload)
+
+                        print(f"Client attempting to initiate lab attempt via proxy: POST http://integration:8024/progress/lab-attempt with payload: {attempt_payload}")
+
+                        response = requests.post("http://integration:8024/progress/lab-attempt", json=attempt_payload)
                         
                         # Store start time in session state
                         st.session_state[f"lab_start_{subtopic}"] = start_time
